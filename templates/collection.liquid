@@ -1,0 +1,43 @@
+{% assign number = settings.products_per_page %}
+{% paginate collection.products by number %}
+
+<div id="collection-description" class="desktop-12 mobile-3">
+  <h1>{{ collection.title }}</h1>
+  <div class="rte">{{ collection.description | remove: "[banner]" }}</div> 
+</div>
+
+<div class="clear"></div>
+
+{% if settings.filters %}
+<div id="full-width-filter" class="desktop-12 tablet-6 mobile-3">
+  {% include 'filter' %}
+</div>
+{% endif %} 
+
+
+{% if settings.collection-sidebar %}
+{% include 'collection-sidebar' %}
+{% endif %}
+
+
+<div id="product-loop" {% if settings.collection-sidebar %}class="desktop-10 tablet-5 mobile-3"{% endif %}>
+  {% assign products-per-row = settings.products-per-row %}
+
+  {% if collection.image %}
+  <div class="product-index {% if products-per-row == "6" %}desktop-2{% cycle ' first', '', '', '', '', ' last' %}{% elsif products-per-row == "4" %}desktop-3{% cycle ' first', '', '', ' last' %}{% elsif products-per-row == "3" %}desktop-4{% cycle ' first', '', ' last' %}{% elsif products-per-row == "5" %}desktop-fifth{% cycle ' first', '', '', '', ' last' %}{% elsif products-per-row == "2" %}desktop-6{% cycle ' first', ' last' %}{% endif %} tablet-half mobile-half" data-alpha="{{ collection.title }}">     
+      {{ collection.image.src | collection_img_url: 'grande' | img_tag: collection_title }}     
+  </div>  
+  {% endif %}
+  {% for product in collection.products %}
+  <div class="product-index {% if template == 'index' and settings.homepage-product-display == 'carousel' %}{% else %}{% if products-per-row == "6" %}desktop-2{% cycle ' first', '', '', '', '', ' last' %}{% elsif products-per-row == "4" %}desktop-3{% cycle ' first', '', '', ' last' %}{% elsif products-per-row == "3" %}desktop-4{% cycle ' first', '', ' last' %}{% elsif products-per-row == "5" %}desktop-fifth{% cycle ' first', '', '', '', ' last' %}{% elsif products-per-row == "2" %}desktop-6{% cycle ' first', ' last' %}{% endif %} tablet-half mobile-half{% endif %}" data-alpha="{{ product.title }}" data-price="{{ product.price }}">     
+    {% include 'product-listing' %}
+  </div>
+  {% endfor %}  
+</div>
+
+
+{% include 'pagination' %}
+
+
+{% endpaginate %}
+

@@ -1,0 +1,91 @@
+<div data-position="cart-form" data-multiple-atc-cover>  
+  <div class="variants">
+    <div class="table-cover">
+
+      <div class="variant-table">
+        
+        {% if product.options_by_name['Color'] != blank %}
+        <div class="clr_box">
+          <div class="clr_label_box">
+            Color
+          </div>
+          <div class="clr_value_box">
+            {% for opt in product.options_by_name['Color'].values %}
+            <span class="clr_value">{{ opt }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="variant-inner-table">
+
+          {% comment %}
+          <tr class="size_variant">
+            {% capture option_titles %}Color,Size{% endcapture %}
+            {% assign option_titles = option_titles | split:',' %}
+            {% for option in product.options %}
+            {% if option_titles contains option %}
+            {% capture option_index %}option{{ forloop.index }}{% endcapture %}
+            {% assign option_values = product.variants | map: option_index | uniq %}
+            <td>{{ option }}:</td>
+            {% for value in option_values %}
+            <td class="option_values">{{ value }}</td>
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+          </tr>
+          {% endcomment %}
+
+          {% comment %}
+          <tr class="stock stock-content">
+            <td>Stock</td>
+            {% for variant in product.variants %}
+            <td>{{variant.inventory_quantity}}</td>
+            {% endfor %}
+          </tr>
+          {% endcomment %}
+
+
+
+          <div class="label_box">
+            <div class="label_item size_label">Size</div>
+            <div class="label_item stock_label">Stock</div>
+            <div class="label_item qty_label">Quantity</div>
+          </div>
+          <div class="items_box">
+            {% for variant in product.variants %}
+            <div class="item_box">
+              <div class="value_item size_value">{{ variant.option1 | default: variant.title }}</div>
+              <div class="value_item stock_value">{{variant.inventory_quantity}}</div>
+              <div class="value_item qty_value">
+                <input type="number" 
+                       min="0"
+                       class="input-quant" 
+                       max="{% if variant.inventory_quantity > 0 %}{{ variant.inventory_quantity }}{% else %}{% if variant.inventory_policy == "continue" %}150000000{% endif %}{% endif %}"
+                       atc-variant 
+                       data-id="{{ variant.id }}"
+                       value="0"/>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+      <div class="clone-content">
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="quanity-cart-row clearfix">
+    <div class="add-to-cart">
+      <button type="button" onclick="multipleATC(this);" class="purchase button"><span>{{ 'products.product.add_to_cart' | t  }}</span> 
+      </button>
+    </div>
+    <div class="add-to-cart-msg">
+
+    </div>
+  </div>
+</div>  

@@ -1,0 +1,128 @@
+<div itemscope itemtype="http://schema.org/Product" id="product-{{ product.id }}" class="product-page">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  <div id="mob-product-images" class="owl-carousel desktop-hide tablet-hide mobile-3">
+    {% for image in product.images %}
+    <div class="mthumb"><img src="{{ image | product_img_url: 'master' }}" alt="{{ image.alt | escape }}"></div>
+    {% endfor %}
+  </div>    
+
+  <div id="product-photos" class="{% if settings.related-products == 'right' %}desktop-5{% else %}desktop-6{% endif %}  tablet-3 mobile-hide">
+    {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+    <div id="bigimage" class="bigimage-{{ product.id }}{% if settings.thumbnails != 'bottom' %} desktop-10 tablet-5{% else %} desktop-12 tablet-6{% endif %}">
+      <img class="mainimage" id="{{ product.id }}" data-image-id="{{ image.id }}" src="{{ featured_image | img_url: 'master' }}" alt='{{ image.alt }}' title="{{ product.title }}"/> 
+    
+    <div class="main-image-navigation">
+      <span class="prev"><i class="fa fa-angle-left"></i></span>
+      <span class="next"><i class="fa fa-angle-right"></i></span>
+    </div>      
+    
+    </div>
+    {% if product.images.size > 1 %} 
+    <div class="thumbnails{% if settings.thumbnails == 'bottom' %} desktop-12 tablet-6{% endif %}">
+      {% for image in product.images %}
+      <a id="{{ forloop.index }}"  href="{{ image | product_img_url: 'master' }}" data-image-id="{{ image.id }}" class="{% if forloop.first %}active {% endif %}thumb clicker-{{ product.id }}">
+        <img class="thumbnail desktop-2 tablet-1" src="{{ image | product_img_url: 'medium' }}" alt="{{ image.alt | escape }}" data-image-id="{{ image.id }}" />
+      </a>
+      {% endfor %} 
+    </div>
+    {% endif %}
+  </div>
+
+
+  <script>
+    $('.bigimage-{{ product.id }}').zoom();	
+    
+    {% if product.images.size > 1 %}
+    // Next and Previous Navigation
+    $('.next').click(function() {
+      var $current = $('.thumb.active'); // active thumb
+      var $thumbs = $('.thumb'); // find other thumbs
+      var $next = $thumbs.eq($thumbs.index($current) + 1); // next thumb        
+      $($next).trigger('click');
+      $($current).removeClass('active');
+    });
+
+    $('.prev').click(function() {
+      var $current = $('.thumb.active'); // active thumb
+      var $thumbs = $('.thumb'); // find other thumbs
+      var $previous = $thumbs.eq($thumbs.index($current) - 1); // prev thumb        
+      $($previous).trigger('click');
+    });
+
+    // Switching main image
+    $('.clicker-{{ product.id }}').click(function() {
+      var newImage = $(this).attr('href');
+    $('.bigimage-{{ product.id }} img').attr({
+      src: newImage
+      });
+
+    $("a.active").removeClass("active");
+    $(this).addClass('active');
+    return false;
+    });    
+    {% endif %}     
+  </script>
+
+
+
+  <div id="product-right" class="{% if settings.related-products == 'right' %}desktop-7{% else %}desktop-6{% endif %} tablet-3 mobile-3">
+    <div id="product-description" {% if settings.related-products == 'right' %}class="desktop-10 tablet-6 mobile-3"{% endif %}>
+      {% if collection %} 
+      <div class="product-navigation">
+        {% if collection.previous_product %}
+        {{ '<i class="fa fa-angle-left" aria-hidden="true"></i>' | link_to: collection.previous_product }}
+        {% endif %}
+        {% if collection.next_product %}
+        {{ '<i class="fa fa-angle-right" aria-hidden="true"></i>' | link_to: collection.next_product }}
+        {% endif %}
+      </div>
+      {% endif %}
+      {% if settings.vendor %}<h2>{{ product.vendor }}</h2>{% endif %}
+      <h1 itemprop="name">{{ product.title }}</h1>
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <p class="product-prices">
+          {% if product.available %}
+          {% if product.compare_at_price > product.price %}
+          <span class="product-price" itemprop="price">{{ product.price | money }}</span>&nbsp;<span class="was">{{ product.compare_at_price | money }}</span>
+          {% else %}
+          <span class="product-price" itemprop="price">{{ product.price | money }}</span>
+          {% endif %}
+          {% else %}
+          <span class="product-price" itemprop="price">{{ 'products.product.sold_out' | t }}</span>
+          {% endif %}
+        </p>    
+
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+        {% include 'product-form' %}
+      </div>
+
+      {{ product.description }}
+
+      <div class="desc">
+        {% include 'social' with product %}
+      </div>
+    </div>
+
+    {% if settings.related-products == 'right' %}
+    <div id="related" class="desktop-2 tablet-hide mobile-hide">
+      {% include 'related-products' %}
+    </div>	
+    {% endif %}
+  </div>
+  <div class="clear"></div>
+  {% if settings.related-products == 'bottom' %}
+  <div id="related" class="bottom-related">
+    {% include 'related-products' %}
+  </div>	
+  <div class="clear"></div>
+  {% endif %}
+
+  <div id="looked-at" class="desktop-12 mobile-hide">
+    {% include 'recently-viewed' %}
+  </div>
+</div>

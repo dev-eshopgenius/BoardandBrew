@@ -1,0 +1,29 @@
+<div class="video-wrap ">
+{% assign class = '' %}
+{% assign videoUrl  = '' %}
+
+{% if settings.home-video-resolution  == '1-1-ratio' %}
+    {% assign videoUrl  = settings.home-featured-video1 %}        
+              {% assign class = 'ratio-1-1' %}
+{% elsif settings.home-video-resolution == '16-9-ratio'  %}  
+	{% assign videoUrl  =  settings.home-featured-video2  %}
+              {% assign class = 'ratio-16-9' %}
+{% else %}
+              {% assign class = 'ratio-21-9' %}
+	{% assign videoUrl  =  settings.home-featured-video3  %}
+{% endif %}
+                <div class="vimeo-wrapper {{class}} desktop-12 tablet-6 mobile-3">
+                  <div class="flex-video">
+                   <video src="{{ videoUrl}}" autobuffer playsinline controls autoplay muted loop></video>                   
+                  </div>
+                  {% if settings.video-title != blank or settings.logo != blank  %}
+                  
+                  <div class="content">
+                    
+                   {% if settings.video-title != blank %} <h2 class="title">{{settings.video-title}}</h2>{% endif %}
+                   {% if settings.logo != blank %} <p><img class="logo" src="{{ settings.logo | img_url:'160x'}}" /></p>{% endif %}
+                  </div>
+                  {% endif %}
+                </div>
+
+</div>
